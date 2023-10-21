@@ -1,51 +1,51 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Number of arms/actions (k)
+# Số lượng bandit (k)
 k = 10
 
-# Probability of randomly choosing a random action
+# Xác suất chọn một bandit ngẫu nhiên
 epsilon = 0.1
 
-# True action values (unknown in practice)
-true_action_values = np.random.normal(0, 1, k)
+# Giá trị thực sự của các bandit (không biết trong thực tế)
+true_bandit_values = np.random.normal(0, 1, k)
 
-# Initialize Q(a) and N(a)
+# Khởi tạo Q(a) và N(a)
 Q = np.zeros(k)
 N = np.zeros(k)
 
-# Store rewards over time for plotting
+# Lưu trữ phần thưởng theo thời gian để vẽ biểu đồ
 reward_history = []
 
-# Number of rounds/iterations
+# Số lượt chơi/iterations
 num_rounds = 1000
 
 for t in range(1, num_rounds + 1):
     if np.random.rand() < epsilon:
-        # Explore: Choose a random action with probability epsilon
+        # Khám phá: Chọn một bandit ngẫu nhiên với xác suất epsilon
         A = np.random.choice(k)
     else:
-        # Exploit: Choose the action with the highest estimated value (breaking ties randomly)
+        # Khai thác: Chọn bandit có giá trị ước tính cao nhất (phá vỡ sự cân bằng bằng cách chọn ngẫu nhiên nếu có nhiều bandit có giá trị bằng nhau)
         max_Q = np.max(Q)
-        best_actions = np.where(Q == max_Q)[0]
-        A = np.random.choice(best_actions)
+        best_bandits = np.where(Q == max_Q)[0]
+        A = np.random.choice(best_bandits)
 
-    # Simulate the reward for the chosen action (true values are unknown)
-    reward = np.random.normal(true_action_values[A], 1)
+    # Mô phỏng phần thưởng cho bandit đã chọn (giá trị thực sự không biết trong thực tế)
+    reward = np.random.normal(true_bandit_values[A], 1)
 
-    # Update Q(a) and N(a)
+    # Cập nhật Q(a) và N(a)
     N[A] += 1
     Q[A] = Q[A] + (reward - Q[A]) / N[A]
 
-    # Track the reward for each round
+    # Theo dõi phần thưởng cho mỗi lượt chơi
     reward_history.append(reward)
 
-# Calculate the cumulative average reward
+# Tính tỷ lệ thắng trung bình tích luỹ
 cumulative_average_reward = np.cumsum(reward_history) / np.arange(1, num_rounds + 1)
 
-# Plot the cumulative average reward
+# Vẽ biểu đồ tỷ lệ thắng trung bình tích luỹ
 plt.plot(range(1, num_rounds + 1), cumulative_average_reward)
-plt.xlabel("Number of Rounds")
-plt.ylabel("Cumulative Average Reward")
-plt.title("Simple Bandit Algorithm")
+plt.xlabel("Số lượt chơi")
+plt.ylabel("Tỷ lệ thắng trung bình tích luỹ")
+plt.title("Giải thuật Bandit Đơn giản")
 plt.show()
